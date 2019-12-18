@@ -1,0 +1,16 @@
+{% if product.title %}
+  {%- assign compare_at_price = product.compare_at_price -%}
+  {%- assign price = product.price -%}
+{% endif %}
+
+{%- assign money_price = price | money -%}
+
+<span class="price-product">
+    {% if compare_at_price < price %}
+      <del><span class=price-money>{{ money_price }}</span></del><span class=price-money>{{compare_at_price | money}}</span>
+      
+    {% else %}
+      <span class=price-money>{{ money_price }}</span>
+    {% endif %}
+</span>
+ 

@@ -1,0 +1,66 @@
+{% comment %}
+    Renders a product card using "Grid" style
+    Accepts:
+    - max_height: {Number} Maximum height of the product's image (required)
+    - product: {Object} Product Liquid object (required)
+    - show_vendor: {Boolean} Show the product's vendor depending on the section setting (optional)
+
+    Usage:
+    {% include 'product-card-grid', max_height: max_height, product: product, show_vendor: section.settings.show_vendor %}
+{% endcomment %}
+{% if product.title %}
+  {%- assign compare_at_price = product.compare_at_price -%}
+  {%- assign price = product.price -%}
+{% endif %}
+
+{% assign date_published = product.published_at | date:'%Y%m%d' %}
+{% assign date_now = 'now' | date:'%Y%m%d' %}
+{% assign date_difference = date_now | minus: date_published %}
+
+<div class="grid-view-item{% unless product.available %} grid-view-item--sold-out{% endunless %} product-card">
+  
+  {% capture img_id %}ProductCardImage-{{ section.id }}-{{ product.id }}{% endcapture %}
+  {% capture wrapper_id %}ProductCardImageWrapper-{{ section.id }}-{{ product.id }}{% endcapture %}
+  {%- assign img_url = product.featured_image | img_url: '1x1' | replace: '_1x1.', '_{width}x.' -%}
+
+  {% unless product.featured_image == blank %}
+    {% include 'image-style', image: product.featured_image, height: max_height, wrapper_id: wrapper_id, img_id: img_id %}
+  {% endunless %}
+
+  <div class="product-card__image-with-placeholder-wrapper" data-image-with-placeholder-wrapper>
+    <div class="grid-view-item__image-wrapper product-card__image-wrapper js">
+      <div class="images__figure">
+        {% if compare_at_price < price %}
+            {% capture discount %}
+              {{ product.compare_at_price_max | minus:product.price | times:100 | divided_by:product.compare_at_price_max }}% 
+            {% endcapture %}
+            <span class="sale-product"> {{ discount }}</span>
+            {% elsif date_difference < 30 %}
+              <div class="product-labels">
+                <span class="new">New</span>
+              </div>
+        {% endif %}
+        <a class="grid-view-item__link grid-view-item__image-container" href="{{ product.url | within: collection }}">
+          <img class="block-img " src="{{ product.featured_image | img_url: '580x' }}" alt="{{ product.featured_image.alt | escape }}" />
+          <img class="hidden-img " src="{{ product.images.last | img_url: '580x' }}" alt="{{ product.images.last.alt | escape }}" />
+        </a>
+        <div class="product-buttons">
+          <a href="#" title="Quick View" class="btn quick-view"><i class="fa fa-search" aria-hidden="true"></i></a>
+          <a href="#" title="Select options" class="btn select-option"><span>Select options</span></a>
+          <a href="#" data-compare-added="Added to Compare" class="btn option-compared " data-product-id="2761905635428" data-product-handle="nothing-happens-hoodie">
+            <i class="fa fa-random" aria-hidden="true"></i>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <noscript>
+    {% capture image_size %}{{ max_height }}x{{ max_height }}{% endcapture %}
+    <img class="grid-view-item__image" src="{{ product.featured_image.src | img_url: image_size, scale: 2 }}" alt="{{ product.featured_image.alt }}" style="max-width: {{ max_height | times: product.featured_image.aspect_ratio }}px;">
+  </noscript>
+  <div class="product-item-details">
+    <div class="h4 grid-view-item__title product-card__title" aria-hidden="true">{{ product.title }}</div>
+    {% include 'product-price', variant: product.selected_or_first_available_variant, product: product, show_vendor: show_vendor %}
+  </div>
+</div>

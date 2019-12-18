@@ -1,0 +1,123 @@
+  <div data-section-id="{{ section.id }}" data-section-type="promotion-section">
+     <div class="box-promotion-show">
+        <div class="container">
+            <div class="row">
+                {% case section.settings.grid %}
+                  {% when 2 %}
+                    {%- assign grid_item_width = 'col-6' -%}
+                  {% when 3 %}
+                    {%- assign grid_item_width = 'col-4' -%}
+                  {% when 4 %}
+                    {%- assign grid_item_width = 'col-3' -%}
+                {% endcase %}
+                
+
+                <div class="collection-grid">
+                  <ul class="grid grid--uniform">
+                    {% for block in section.blocks limit: section.blocks.size %}
+                        <li class="grid__item {{ grid_item_width }}" {{ block.shopify_attributes }}>
+                          <div class="promotion-show">
+                              <div class="promotion-item">
+                                  <div class="image-figure-wapper">
+                                      <img src="{{ block.settings.image | img_url: '1000x' }}" alt="{{ block.settings.image.alt }}" />
+                                  </div>
+                                  <div class="promotion-content-wrapper">
+                                      <div class="promotion-content-inner">
+                                          <h6 class="box-title-content">
+                                              {{ block.settings.title}}
+                                          </h6>
+                                          <p>
+                                              {{ block.settings.subheading}}
+                                              <a href="{{ block.settings.link}}"> {{ block.settings.phone_label}}</a><a href="#">
+                                                  {{ block.settings.subheading_2}}
+                                              </a>
+                                          </p>
+                                      </div>
+                                  </div>
+                              </div>
+                          </div>
+                        </li>
+                    {%- endfor -%}
+                  </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% schema %}
+{
+  "name": "Promotion Shop",
+  "class": "promotion",
+  "max_blocks": 4,
+  "settings":[
+    {
+      "type": "range",
+      "id": "grid",
+      "label": "Row",
+      "min": 2,
+      "max": 4,
+      "step": 1,
+      "default": 3
+    }
+  ],
+  "blocks": [
+    {
+      "type": "image",
+      "name": "Image",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Heading",
+          "default": "Image"
+        },
+        {
+          "type": "text",
+          "id": "subheading",
+          "label": "Subheading",
+          "default": "Tell your brand's story through images"
+        },
+        {
+          "type": "text",
+          "id": "phone_label",
+          "label": "Phone"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Link"
+        },
+        {
+          "type": "text",
+          "id": "subheading_2",
+          "label": "Text",
+          "default": "or book an instore consultation"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Promotion Shop",
+      "category": "Image",
+      "blocks": [
+        {
+          "type": "image"
+        },
+        {
+          "type": "image"
+        },
+        {
+          "type": "image"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
